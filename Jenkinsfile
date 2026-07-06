@@ -50,7 +50,22 @@ pipeline {
                 }
             }
         }
+stage('Update kubeconfig') {
+    steps {
+        sh '''
+        aws eks update-kubeconfig \
+        --region us-east-1 \
+        --name medicure-cluster-v2
+        '''
+    }
+}
 
+stage('Deploy to Kubernetes') {
+    steps {
+        sh 'kubectl apply -f deployment.yaml'
+        sh 'kubectl apply -f service.yaml'
+    }
+}
         stage('Deploy Container') {
             steps {
                 sh '''
